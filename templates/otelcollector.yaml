@@ -61,6 +61,10 @@ spec:
       value: "k8s.cluster.name={{ default "unknown" .Values.ClusterName }},k8s.node.name=$(K8S_NODE_NAME)"
   config: |
     receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            {{- toYaml .Values.scrape_configs | nindent 12 }}
       otlp:
         protocols:
           grpc:
@@ -288,7 +292,7 @@ spec:
         - oauth2client
       pipelines:
         metrics:
-          receivers: [ otlp, kubeletstats, hostmetrics, k8s_cluster ]
+          receivers: [ prometheus, otlp, kubeletstats, hostmetrics, k8s_cluster ]
           processors: [ batch, k8sattributes ]
           exporters: [ otlp/opsramp_metrics ]
         logs:
