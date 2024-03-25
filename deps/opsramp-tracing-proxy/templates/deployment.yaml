@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opsramp-tracing-proxy.fullname" . }}
+  labels:
+    {{- include "opsramp-tracing-proxy.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "opsramp-tracing-proxy.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "opsramp-tracing-proxy.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{- include "imagePullPolicy" . }}
+          command:
+            - "/usr/bin/tracing-proxy"
+            - "-c"
+            - "/etc/tracing-proxy/config.yaml"
+            - "-r"
+            - "/etc/tracing-proxy/rules.yaml"
+          ports:
+            - name: http
+              containerPort: {{include "httpPort" . | trim }}
+              protocol: TCP
+            - name: peer
+              containerPort: {{include "httpPeerPort" . | trim }}
+              protocol: TCP
+            - containerPort: {{include "grpcPort" . | trim }}
+              name: grpc
+            - containerPort: {{include "grpcPeerPort" . | trim }}
+              name: grpc-peer
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+            - name: CONTAINER_CPU_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  containerName: {{ .Chart.Name }}
+                  resource: requests.cpu
+            - name: CONTAINER_CPU_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: {{ .Chart.Name }}
+                  resource: limits.cpu
+            - name: CONTAINER_MEM_REQUEST
+              valueFrom:
+                resourceFieldRef:
+                  containerName: {{ .Chart.Name }}
+                  resource: requests.memory
+            - name: CONTAINER_MEM_LIMIT
+              valueFrom:
+                resourceFieldRef:
+                  containerName: {{ .Chart.Name }}
+                  resource: limits.memory
+          volumeMounts:
+            - name: {{ include "opsramp-tracing-proxy.fullname" . }}-rules
+              mountPath: /etc/tracing-proxy/rules.yaml
+              subPath: rules.yaml
+              readOnly: true
+            - name: {{ include "opsramp-tracing-proxy.fullname" . }}-config
+              mountPath: /etc/tracing-proxy/config.yaml
+              subPath: config.yaml
+              readOnly: true
+      volumes:
+        - configMap:
+            name: {{ include "opsramp-tracing-proxy.fullname" . }}-rules
+          name: {{ include "opsramp-tracing-proxy.fullname" . }}-rules
+        - configMap:
+            name: {{ include "opsramp-tracing-proxy.fullname" . }}-config
+          name: {{ include "opsramp-tracing-proxy.fullname" . }}-config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

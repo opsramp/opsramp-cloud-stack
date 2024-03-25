@@ -1,0 +1,22 @@
+apiVersion: v2
+name: opsramp-cloud-stack
+description: A Helm chart for OpsRamp Observability
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - name: opsramp-tracing-proxy
+    alias: trace-proxy
+    version: 17.0.2
+    repository: file://deps/opsramp-tracing-proxy
+  - name: opentelemetry-operator
+    version: 0.49.1
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+#  - name: kube-state-metrics
+#    version: "5.18.0"
+#    repository: "https://prometheus-community.github.io/helm-charts"
+#    condition: kubeStateMetrics.enabled
+#  - name: prometheus-node-exporter
+#    version: "4.32.0"
+#    repository: "https://prometheus-community.github.io/helm-charts"
+#    condition: nodeExporter.enabled

@@ -1,0 +1,126 @@
+ClusterName: "unknown"
+
+## OpenTelemetry Collector Endpoint
+OpenTelemetryCollector:
+  GRPC: "0.0.0.0:4317"
+  HTTP: "0.0.0.0:4318"
+
+##################################
+## Authentication Configuration ##
+##################################
+Auth:
+  # Endpoint - the APIServer address provided in OpsRamp Portal to which auth token request is to be made
+  Endpoint: "***REMOVED***"
+  # Key - authentication key provided in OpsRamp Portal
+  Key: "***REMOVED***"
+  # Secret - authentication Secret provided in OpsRamp Portal
+  Secret: "***REMOVED***"
+  # TenantId - tenant/client id to which the traces are to be posted
+  TenantId: "***REMOVED***"
+
+Endpoints:
+  Metrics: "***REMOVED***"
+  Logs: "***REMOVED***"
+  Traces: "***REMOVED***"
+
+cert-manager:
+  enabled: false
+  installCRDs: true
+  namespace: cert-manager
+
+trace-proxy:
+  fullnameOverride: "proxy"
+  replicaCount: 1
+  image:
+    repository: ghcr.io/lokeshopsramp/trace-proxy
+    pullPolicy: "IfNotPresent"
+    tag: "arm"
+  config:
+    OpsrampAPI: "***REMOVED***"
+    #########################
+    ## Proxy Configuration ##
+    #########################
+    ProxyConfiguration:
+      # Protocol accepts http and https
+      Protocol: "http"
+      # Host takes the proxy server address
+      Host: ""
+      # Port takes the proxy server port
+      Port: 3128
+      # UserName takes the proxy username
+      Username: ""
+      # Password takes the proxy password
+      Password: ""
+
+    ##################################
+    ## Authentication Configuration ##
+    ##################################
+    AuthConfiguration:
+      # Endpoint - the APIServer address provided in OpsRamp Portal to which auth token request is to be made
+      Endpoint: "***REMOVED***"
+      # Key - authentication key provided in OpsRamp Portal
+      Key: "***REMOVED***"
+      # Secret - authentication Secret provided in OpsRamp Portal
+      Secret: "***REMOVED***"
+      # TenantId - tenant/client id to which the traces are to be posted
+      TenantId: "***REMOVED***"
+
+    LogsEndpoint: "***REMOVED***"
+
+    MetricsConfig:
+      # Enable specifies whether the metrics are supposed to be collected and exported to OpsRamp
+      Enable: true
+      OpsRampAPI: "***REMOVED***"
+
+
+opentelemetry-operator:
+  admissionWebhooks:
+    timeoutSeconds: 10
+    certManager:
+      enabled: true
+
+  ## Provide OpenTelemetry Operator manager container image and resources.
+  ##
+  manager:
+    image:
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
+      tag: ""
+    collectorImage:
+      repository: otel/opentelemetry-collector-contrib
+      tag: 0.96.0
+    opampBridgeImage:
+      repository: ""
+      tag: ""
+    targetAllocatorImage:
+      repository: ""
+      tag: ""
+    autoInstrumentationImage:
+      java:
+        repository: ""
+        tag: ""
+      nodejs:
+        repository: ""
+        tag: ""
+      python:
+        repository: ""
+        tag: ""
+      dotnet:
+        repository: ""
+        tag: ""
+      # The Go instrumentaiton support in the operator is disabled by default.
+      # To enable it, use the operator.autoinstrumentation.go feature gate.
+      go:
+        repository: ""
+        tag: ""
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+
+
+
+
+

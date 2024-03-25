@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "opsramp-tracing-proxy.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opsramp-tracing-proxy.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{include "httpPort" . | trim }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{include "httpPeerPort" . | trim }}
+      targetPort: peer
+      protocol: TCP
+      name: peer
+    - port: {{include "grpcPort" . | trim }}
+      targetPort: grpc
+      name: grpc
+    - port: {{include "grpcPeerPort" . | trim }}
+      targetPort: grpc-peer
+      name: grpc-peer
+
+  selector:
+    {{- include "opsramp-tracing-proxy.selectorLabels" . | nindent 4 }}
