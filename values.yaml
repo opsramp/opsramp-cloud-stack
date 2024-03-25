@@ -10,18 +10,18 @@ OpenTelemetryCollector:
 ##################################
 Auth:
   # Endpoint - the APIServer address provided in OpsRamp Portal to which auth token request is to be made
-  Endpoint: "***REMOVED***"
+  Endpoint: ""
   # Key - authentication key provided in OpsRamp Portal
-  Key: "***REMOVED***"
+  Key: ""
   # Secret - authentication Secret provided in OpsRamp Portal
-  Secret: "***REMOVED***"
+  Secret: ""
   # TenantId - tenant/client id to which the traces are to be posted
-  TenantId: "***REMOVED***"
+  TenantId: ""
 
 Endpoints:
-  Metrics: "***REMOVED***"
-  Logs: "***REMOVED***"
-  Traces: "***REMOVED***"
+  Metrics: ""
+  Logs: ""
+  Traces: ""
 
 cert-manager:
   enabled: false
@@ -36,7 +36,7 @@ trace-proxy:
     pullPolicy: "IfNotPresent"
     tag: "arm"
   config:
-    OpsrampAPI: "***REMOVED***"
+    OpsrampAPI: ""
     #########################
     ## Proxy Configuration ##
     #########################
@@ -57,20 +57,20 @@ trace-proxy:
     ##################################
     AuthConfiguration:
       # Endpoint - the APIServer address provided in OpsRamp Portal to which auth token request is to be made
-      Endpoint: "***REMOVED***"
+      Endpoint: ""
       # Key - authentication key provided in OpsRamp Portal
-      Key: "***REMOVED***"
+      Key: ""
       # Secret - authentication Secret provided in OpsRamp Portal
-      Secret: "***REMOVED***"
+      Secret: ""
       # TenantId - tenant/client id to which the traces are to be posted
-      TenantId: "***REMOVED***"
+      TenantId: ""
 
-    LogsEndpoint: "***REMOVED***"
+    LogsEndpoint: ""
 
     MetricsConfig:
       # Enable specifies whether the metrics are supposed to be collected and exported to OpsRamp
       Enable: true
-      OpsRampAPI: "***REMOVED***"
+      OpsRampAPI: ""
 
 
 opentelemetry-operator:
