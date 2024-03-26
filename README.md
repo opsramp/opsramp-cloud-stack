@@ -27,3 +27,12 @@ helm install \
   --set installCRDs=true
 ```
 
+## Installing OpsRamp Cloud Stack Helm
+
+```bash 
+helm upgrade -i \
+  opsramp-cloud-stack . \
+  --namespace opsramp \
+  --create-namespace \
+  --set global.Token="<token>"
+```

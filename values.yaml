@@ -17,7 +17,7 @@ global:
   #    "tp_logs": "https://portal.opsramp.net",
   #    "tp_traces": "https://portal.opsramp.net"
   #  }
-  OpenTelemetryToken: ""
+  Token: ""
 
 ## OpenTelemetry Collector Endpoint
 OpenTelemetryCollector:
