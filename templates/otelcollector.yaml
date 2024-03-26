@@ -255,9 +255,9 @@ spec:
 
     exporters:
       otlp/opsramp_metrics:
-        endpoint: {{ .Values.Endpoints.Metrics | quote }}
+        endpoint: {{ include "otel.endpoint.metrics" . | trim | quote }}
         headers:
-          "tenantId": {{ .Values.Auth.TenantId | quote }}
+          "tenantId": {{ include "otel.auth.tenantId" . | trim | quote }}
         compression: "gzip"
         tls:
           insecure: false
@@ -265,9 +265,9 @@ spec:
         auth:
           authenticator: oauth2client
       otlp/opsramp_logs:
-        endpoint: {{ .Values.Endpoints.Logs | quote }}
+        endpoint: {{ include "otel.endpoint.logs" . | trim | quote }}
         headers:
-          "tenantId": {{ .Values.Auth.TenantId | quote }}
+          "tenantId": {{ include "otel.auth.tenantId" . | trim | quote }}
         compression: "gzip"
         tls:
           insecure: false
@@ -283,9 +283,9 @@ spec:
 
     extensions:
       oauth2client:
-        client_id: {{ .Values.Auth.Key | quote }}
-        client_secret: {{ .Values.Auth.Secret | quote }}
-        token_url: {{ .Values.Auth.Endpoint | quote }}
+        client_id: {{ include "otel.auth.key" . | trim | quote }}
+        client_secret: {{ include "otel.auth.secret" . | trim | quote }}
+        token_url: {{ include "otel.auth.endpoint" . | trim | quote }}
 
     service:
       extensions:

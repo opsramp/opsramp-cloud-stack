@@ -60,3 +60,139 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Extracing OpenTelemetry Collector Creds
+*/}}
+{{- define "otel.auth.endpoint" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "ot_endpoint" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "otel.auth.key" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "ot_key" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "otel.auth.secret" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "ot_secret" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "otel.auth.tenantId" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "ot_tenantId" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "otel.endpoint.metrics" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "ot_metrics" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "otel.endpoint.logs" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "ot_logs" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Extracing OpsRamp Tracing Proxy Creds
+*/}}
+{{- define "tp.auth.endpoint" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "tp_endpoint" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "tp.auth.key" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "tp_key" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "tp.auth.secret" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "tp_secret" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "tp.auth.tenantId" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "tp_tenantId" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "tp.endpoint.metrics" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "tp_metrics" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "tp.endpoint.logs" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "tp_logs" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}
+
+{{- define "tp.endpoint.traces" -}}
+{{- if .Values.global.OpenTelemetryToken }}
+{{ with .Values.global.OpenTelemetryToken | b64dec }}
+{{- get (fromJson .) "tp_traces" | default "" }}
+{{ end }}
+{{- else }}
+{{- "none" }}
+{{- end }}
+{{- end }}

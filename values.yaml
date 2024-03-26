@@ -1,76 +1,43 @@
-ClusterName: "unknown"
+ClusterName: "default"
+
+global:
+  # OpenTelemetryToken: base64Encoded
+  #  {
+  #    "ot_endpoint": "https://auth_token_url",
+  #    "ot_key": "key",
+  #    "ot_secret": "secret",
+  #    "ot_tenantId": "tenantId",
+  #    "ot_metrics": "host:port",
+  #    "ot_logs": "host:port",
+  #    "tp_endpoint": "https://portal.opsramp.net",
+  #    "tp_key": "key",
+  #    "tp_secret": "secret",
+  #    "tp_tenantId": "tenantId",
+  #    "tp_metrics": "https://portal.opsramp.net",
+  #    "tp_logs": "https://portal.opsramp.net",
+  #    "tp_traces": "https://portal.opsramp.net"
+  #  }
+  OpenTelemetryToken: ""
 
 ## OpenTelemetry Collector Endpoint
 OpenTelemetryCollector:
   GRPC: "0.0.0.0:4317"
   HTTP: "0.0.0.0:4318"
 
-##################################
-## Authentication Configuration ##
-##################################
-Auth:
-  # Endpoint - the APIServer address provided in OpsRamp Portal to which auth token request is to be made
-  Endpoint: ""
-  # Key - authentication key provided in OpsRamp Portal
-  Key: ""
-  # Secret - authentication Secret provided in OpsRamp Portal
-  Secret: ""
-  # TenantId - tenant/client id to which the traces are to be posted
-  TenantId: ""
-
-Endpoints:
-  Metrics: ""
-  Logs: ""
-  Traces: ""
-
-cert-manager:
-  enabled: false
-  installCRDs: true
-  namespace: cert-manager
-
 trace-proxy:
   fullnameOverride: "proxy"
   replicaCount: 1
-  image:
-    repository: ghcr.io/lokeshopsramp/trace-proxy
-    pullPolicy: "IfNotPresent"
-    tag: "arm"
   config:
-    OpsrampAPI: ""
-    #########################
-    ## Proxy Configuration ##
-    #########################
-    ProxyConfiguration:
-      # Protocol accepts http and https
-      Protocol: "http"
-      # Host takes the proxy server address
-      Host: ""
-      # Port takes the proxy server port
-      Port: 3128
-      # UserName takes the proxy username
-      Username: ""
-      # Password takes the proxy password
-      Password: ""
-
-    ##################################
-    ## Authentication Configuration ##
-    ##################################
+    OpsrampAPI: '{{ include "tp.endpoint.traces" . | trim }}'
     AuthConfiguration:
-      # Endpoint - the APIServer address provided in OpsRamp Portal to which auth token request is to be made
-      Endpoint: ""
-      # Key - authentication key provided in OpsRamp Portal
-      Key: ""
-      # Secret - authentication Secret provided in OpsRamp Portal
-      Secret: ""
-      # TenantId - tenant/client id to which the traces are to be posted
-      TenantId: ""
-
-    LogsEndpoint: ""
-
+      Endpoint: '{{ include "tp.auth.endpoint" . | trim }}'
+      Key: '{{ include "tp.auth.key" . | trim }}'
+      Secret: '{{ include "tp.auth.secret" . | trim }}'
+      TenantId: '{{ include "tp.auth.tenantId" . | trim }}'
+    LogsEndpoint: '{{ include "tp.endpoint.logs" . | trim }}'
     MetricsConfig:
-      # Enable specifies whether the metrics are supposed to be collected and exported to OpsRamp
       Enable: true
-      OpsRampAPI: ""
+      OpsRampAPI: '{{ include "tp.endpoint.metrics" . | trim }}'
 
 
 opentelemetry-operator:
@@ -287,6 +254,3 @@ scrape_configs:
     tls_config:
       ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
       insecure_skip_verify: true
-
-
-
