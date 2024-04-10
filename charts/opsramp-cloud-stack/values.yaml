@@ -1,0 +1,114 @@
+ClusterName: "default"
+
+global:
+  # Token: base64Encoded
+  #  {
+  #    "ot_endpoint": "https://auth_token_url",
+  #    "ot_key": "key",
+  #    "ot_secret": "secret",
+  #    "ot_tenantId": "tenantId",
+  #    "ot_metrics": "host:port",
+  #    "ot_logs": "host:port",
+  #    "tp_endpoint": "https://portal.opsramp.net",
+  #    "tp_key": "key",
+  #    "tp_secret": "secret",
+  #    "tp_tenantId": "tenantId",
+  #    "tp_metrics": "https://portal.opsramp.net",
+  #    "tp_logs": "https://portal.opsramp.net",
+  #    "tp_traces": "https://portal.opsramp.net"
+  #  }
+  Token: ""
+
+metricsCollector:
+  enabled: true
+  replicas: 3
+  scrape_configs_file: "scrape_configs.yaml"
+
+logsCollector:
+  enabled: true
+
+tracesCollector:
+  enabled: true
+  replicas: 1
+
+kubeEventsCollector:
+  enabled: true
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+
+## OpenTelemetry Collector Endpoint
+OpenTelemetryCollector:
+  GRPC: "0.0.0.0:4317"
+  HTTP: "0.0.0.0:4318"
+
+trace-proxy:
+  fullnameOverride: "proxy"
+  replicaCount: 1
+  image:
+    repository: ghcr.io/lokeshopsramp/trace-proxy
+    pullPolicy: "IfNotPresent"
+    tag: "arm"
+  config:
+    OpsrampAPI: '{{ include "tp.endpoint.traces" . | trim }}'
+    AuthConfiguration:
+      Endpoint: '{{ include "tp.auth.endpoint" . | trim }}'
+      Key: '{{ include "tp.auth.key" . | trim }}'
+      Secret: '{{ include "tp.auth.secret" . | trim }}'
+      TenantId: '{{ include "tp.auth.tenantId" . | trim }}'
+    LogsEndpoint: '{{ include "tp.endpoint.logs" . | trim }}'
+    MetricsConfig:
+      Enable: true
+      OpsRampAPI: '{{ include "tp.endpoint.metrics" . | trim }}'
+
+
+opentelemetry-operator:
+  admissionWebhooks:
+    timeoutSeconds: 10
+    certManager:
+      enabled: true
+
+  ## Provide OpenTelemetry Operator manager container image and resources.
+  ##
+  manager:
+    image:
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/opentelemetry-operator
+      tag: ""
+    collectorImage:
+      repository: otel/opentelemetry-collector-contrib
+      tag: 0.96.0
+    opampBridgeImage:
+      repository: ""
+      tag: ""
+    targetAllocatorImage:
+      repository: ""
+      tag: ""
+    autoInstrumentationImage:
+      java:
+        repository: ""
+        tag: ""
+      nodejs:
+        repository: ""
+        tag: ""
+      python:
+        repository: ""
+        tag: ""
+      dotnet:
+        repository: ""
+        tag: ""
+      # The Go instrumentaiton support in the operator is disabled by default.
+      # To enable it, use the operator.autoinstrumentation.go feature gate.
+      go:
+        repository: ""
+        tag: ""
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
