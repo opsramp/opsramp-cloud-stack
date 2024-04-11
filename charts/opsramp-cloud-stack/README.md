@@ -178,3 +178,18 @@ helm upgrade -i \
   --set nodeExporter.enabled=false
 ```
 
+## Uninstalling OpsRamp Cloud Stack
+
+```bash
+helm uninstall opsramp-cloud-stack -n opsramp
+```
+
+### The OpenTelemetry Collector CRD created by this chart won't be removed by default and should be manually deleted:
+
+```bash 
+kubectl delete crd opentelemetrycollectors.opentelemetry.io
+kubectl delete crd opampbridges.opentelemetry.io
+kubectl delete crd instrumentations.opentelemetry.io
+```
+
+

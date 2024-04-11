@@ -5,8 +5,6 @@ metadata:
   name: {{ include "opsramp-cloud-stack.fullname" . }}-traces
   labels:
     {{- include "opsramp-cloud-stack.labels" . | nindent 4 }}
-  annotations:
-    "helm.sh/hook": post-install
 spec:
   mode: deployment
   replicas: {{ .Values.tracesCollector.replicas | default 1 }}

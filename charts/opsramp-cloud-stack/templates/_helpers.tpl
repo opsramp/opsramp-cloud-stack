@@ -62,6 +62,20 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+OpenTelemetry Operator Chart Name
+*/}}
+{{- define "otel-op-chart" -}}
+{{ include "opsramp-cloud-stack.fullname" . }}-opentelemetry-operator
+{{- end }}
+
+{{/*
+OpenTelemetry Operator Weebhook Service
+*/}}
+{{- define "otel-op-webhook" -}}
+{{ include "opsramp-cloud-stack.fullname" . }}-opentelemetry-operator-webhook
+{{- end }}
+
+{{/*
 Extracing OpenTelemetry Collector Creds
 */}}
 {{- define "otel.auth.endpoint" -}}
