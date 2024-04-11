@@ -167,6 +167,69 @@ logsCollector:
 tracesCollector:
   enabled: true
   replicas: 1
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: '{{ default "0.0.0.0:4317" .Values.OpenTelemetryCollector.GRPC | trim }}'
+          http:
+            endpoint: '{{ default "0.0.0.0:4318" .Values.OpenTelemetryCollector.HTTP | trim }}'
+
+    processors:
+      batch:
+        timeout: 1s
+        send_batch_size: 1000
+        send_batch_max_size: 2000
+      k8sattributes:
+        passthrough: false
+        pod_association:
+          - sources:
+              - from: resource_attribute
+                name: k8s.pod.name
+        extract:
+          metadata:
+            - k8s.cluster.uid
+            - k8s.namespace.name
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.node.name
+            - k8s.pod.start_time
+            - k8s.deployment.name
+            - k8s.replicaset.name
+            - k8s.replicaset.uid
+            - k8s.daemonset.name
+            - k8s.daemonset.uid
+            - k8s.job.name
+            - k8s.job.uid
+            - k8s.cronjob.name
+            - k8s.statefulset.name
+            - k8s.statefulset.uid
+            - container.image.tag
+            - container.image.name
+      transform:
+        error_mode: ignore
+        log_statements:
+          - context: resource
+            statements:
+              - set(attributes["host"], attributes["k8s.node.name"])
+              - set(attributes["type"], "event")
+              - set(attributes["source"], "OpenTelemetry Collector")
+
+    exporters:
+      otlp/opsramp_traces:
+        endpoint: '{{ index .Values "trace-proxy" "fullnameOverride" }}:9090'
+        timeout: 30s
+        tls:
+          insecure: true
+          insecure_skip_verify: true
+
+    service:
+      pipelines:
+        traces:
+          receivers: [ otlp ]
+          processors: [ batch, k8sattributes, transform ]
+          exporters: [ otlp/opsramp_traces ]
 
 kubeEventsCollector:
   enabled: true
@@ -292,7 +355,7 @@ opentelemetry-operator:
       tag: ""
     collectorImage:
       repository: otel/opentelemetry-collector-contrib
-      tag: 0.96.0
+      tag: 0.97.0
     opampBridgeImage:
       repository: ""
       tag: ""
