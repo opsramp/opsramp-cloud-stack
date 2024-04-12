@@ -52,10 +52,13 @@ spec:
           fieldPath: status.podIP
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: "k8s.cluster.name={{ default "unknown" .Values.ClusterName }},k8s.node.name=$(K8S_NODE_NAME)"
-  mode: statefulset
   replicas: {{ .Values.metricsCollector.replicas | default 1 }}
+  mode: statefulset
   targetAllocator:
     enabled: true
+    serviceAccount: "{{ include "opsramp-cloud-stack.fullname" . }}-metrics-collector"
+    prometheusCR:
+      enabled: true
   config: |
     receivers:
       prometheus:
@@ -246,7 +249,7 @@ rules:
     resources:
       - servicemonitors
       - podmonitors
-    verbs: [ "get", "list", "watch" ]
+    verbs: [ "get", "list", "watch", "*" ]
   - apiGroups:
       - extensions
     resources:

@@ -21,7 +21,7 @@ global:
 
 metricsCollector:
   enabled: true
-  replicas: 3
+  replicas: 1
   scrape_configs_file: "scrape_configs.yaml"
 
 logsCollector:
