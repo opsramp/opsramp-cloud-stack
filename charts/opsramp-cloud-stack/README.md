@@ -55,7 +55,7 @@ helm install \
 ### Download and extract Helm Chart
 
 ```bash
-helm pull oci://us-docker.pkg.dev/opsramp-registry/agent-images/opsramp-cloud-stack \
+helm pull oci://us-docker.pkg.dev/opsramp-registry/agent-images/opsramp-cloud-stack/opsramp-cloud-stack \
     --version 0.1.0 \
     --untar
 cd opsramp-cloud-stack
