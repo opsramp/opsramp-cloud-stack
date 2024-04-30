@@ -325,9 +325,9 @@ trace-proxy:
   fullnameOverride: "proxy"
   replicaCount: 1
   image:
-    repository: ghcr.io/lokeshopsramp/trace-proxy
+    repository: us-docker.pkg.dev/opsramp-registry/agent-images/trace-proxy
     pullPolicy: "IfNotPresent"
-    tag: "arm"
+    tag: "latest"
   config:
     OpsrampAPI: '{{ include "tp.endpoint.traces" . | trim }}'
     AuthConfiguration:

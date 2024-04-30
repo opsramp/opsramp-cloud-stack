@@ -1,13 +1,19 @@
-{{ if eq .Values.tracesCollector.enabled true }}
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: {{ include "opsramp-cloud-stack.fullname" . }}-traces
   labels:
     {{- include "opsramp-cloud-stack.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   mode: deployment
+  {{ if eq .Values.tracesCollector.enabled true }}
   replicas: {{ .Values.tracesCollector.replicas | default 1 }}
+  {{ else }}
+  replicas: 0
+  {{ end }}
   env:
     - name: K8S_NODE_NAME
       valueFrom:
@@ -122,4 +128,3 @@ subjects:
     # quirk of the Operator
     name: "{{ include "opsramp-cloud-stack.fullname" . }}-traces-collector"
     namespace: {{ $.Release.Namespace }}
-{{ end }}

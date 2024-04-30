@@ -1,12 +1,19 @@
-{{ if eq .Values.logsCollector.enabled true }}
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: {{ include "opsramp-cloud-stack.fullname" . }}-logs
   labels:
     {{- include "opsramp-cloud-stack.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
+  {{ if eq .Values.logsCollector.enabled true }}
   mode: daemonset
+  {{ else }}
+  mode: deployment
+  replicas: 0
+  {{ end }}
   volumeMounts:
     - mountPath: /var/log
       name: varlog
@@ -135,4 +142,3 @@ subjects:
     # quirk of the Operator
     name: "{{ include "opsramp-cloud-stack.fullname" . }}-logs-collector"
     namespace: {{ $.Release.Namespace }}
-{{ end }}

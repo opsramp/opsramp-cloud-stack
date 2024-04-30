@@ -1,10 +1,12 @@
-{{ if eq .Values.metricsCollector.enabled true }}
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: {{ include "opsramp-cloud-stack.fullname" . }}-metrics
   labels:
     {{- include "opsramp-cloud-stack.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install, post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   hostNetwork: true
   volumeMounts:
@@ -52,7 +54,11 @@ spec:
           fieldPath: status.podIP
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: "k8s.cluster.name={{ default "unknown" .Values.ClusterName }},k8s.node.name=$(K8S_NODE_NAME)"
+  {{ if eq .Values.metricsCollector.enabled true }}
   replicas: {{ .Values.metricsCollector.replicas | default 1 }}
+  {{ else }}
+  replicas: 0
+  {{ end }}
   mode: statefulset
   targetAllocator:
     enabled: true
@@ -225,6 +231,29 @@ kind: ClusterRole
 metadata:
   name: {{ include "opsramp-cloud-stack.fullname" . }}-metrics
 rules:
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - alertmanagers
+      - alertmanagers/finalizers
+      - alertmanagers/status
+      - alertmanagerconfigs
+      - prometheuses
+      - prometheuses/finalizers
+      - prometheuses/status
+      - prometheusagents
+      - prometheusagents/finalizers
+      - prometheusagents/status
+      - thanosrulers
+      - thanosrulers/finalizers
+      - thanosrulers/status
+      - scrapeconfigs
+      - servicemonitors
+      - podmonitors
+      - probes
+      - prometheusrules
+    verbs:
+      - '*'
   - apiGroups: [ "" ]
     resources:
       - events
@@ -245,11 +274,6 @@ rules:
       - pods
       - pods/status
     verbs: [ "get", "list", "watch" ]
-  - apiGroups: [ "monitoring.coreos.com" ]
-    resources:
-      - servicemonitors
-      - podmonitors
-    verbs: [ "get", "list", "watch", "*" ]
   - apiGroups:
       - extensions
     resources:
@@ -299,4 +323,3 @@ subjects:
     # quirk of the Operator
     name: "{{ include "opsramp-cloud-stack.fullname" . }}-metrics-collector"
     namespace: {{ $.Release.Namespace }}
-{{ end }}
