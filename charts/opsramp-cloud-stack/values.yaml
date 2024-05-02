@@ -127,7 +127,7 @@ logsCollector:
           - context: resource
             statements:
               - set(attributes["host"], attributes["k8s.node.name"])
-              - set(attributes["type"], "event")
+              - set(attributes["type"], "log")
               - set(attributes["source"], "OpenTelemetry Collector")
 
     exporters:
