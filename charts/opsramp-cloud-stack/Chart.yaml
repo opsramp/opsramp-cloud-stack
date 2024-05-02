@@ -9,6 +9,7 @@ dependencies:
     alias: trace-proxy
     version: 17.0.2
     repository: file://deps/opsramp-tracing-proxy
+    condition: tracesCollector.enabled
   - name: opentelemetry-operator
     version: 0.53.2
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts

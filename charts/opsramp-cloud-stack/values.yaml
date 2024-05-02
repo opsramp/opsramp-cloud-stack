@@ -312,9 +312,31 @@ kubeEventsCollector:
 kubeStateMetrics:
   enabled: true
 
+kube-state-metrics:
+  rbac:
+    create: true
+  releaseLabel: true
+  prometheus:
+    monitor:
+      enabled: true
+  selfMonitor:
+    enabled: false
+
 nodeExporter:
   enabled: true
 
+prometheus-node-exporter:
+  releaseLabel: true
+  extraArgs:
+    - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+    - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
+  service:
+    portName: http-metrics
+  prometheus:
+    monitor:
+      enabled: true
+  rbac:
+    pspEnabled: false
 
 ## OpenTelemetry Collector Endpoint
 OpenTelemetryCollector:
